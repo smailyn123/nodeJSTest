@@ -1,0 +1,12 @@
+{
+  "name": "practice-app",
+  "version": "0.0.0",
+  "description": "PracticeApp",
+  "main": "server.js",
+  "author": {
+    "name": ""
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
