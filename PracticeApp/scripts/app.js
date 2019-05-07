@@ -5,5 +5,5 @@ let taskInput = document.getElementById("task-text");
 let localStorage = new localStorage();
 
 submitBtn.addEventListener('click', (event) => {
-    localStorage.
+    //localStorage.setItem()
 });
