@@ -61,7 +61,7 @@ const initElementTasks = (tasks) => {
 
             try {
 
-                for (let i = 0; i < tasks.lenght; i++) {
+                for (let i = 0; i < tasks.length; i++) {
                     let item = document.createElement('li');
                     item.innerHTML = '<div class="alert alert-primary">' + tasks[i] + '</div>';
                     container.appendChild(item);
