@@ -4,16 +4,18 @@ let container = document.getElementById("task-container");
 
 let tasks = new Array();
 
-const clearInput = () => { taskInput.value = ""; }
+const clearInput = () => {
+    taskInput.value = "";
+}
 
-const createTaskElement = (text) => {
+const createTaskElement = (task) => {
 
     return new Promise((success, fail) => {
-        if (text) {
+        if (task) {
 
             try {
                 let item = document.createElement('li');
-                item.innerHTML = '<div class="alert alert-primary">' + text + '</div>';
+                item.innerHTML = '<div class="alert alert-primary">' + task.text + '<button type="button" class="close" onclick="remove(' + task.id + ')" aria-label="Remove"><span aria-hidden="true"><i class="far fa-trash-alt"></i></span></button></div>';
                 container.appendChild(item);
                 success("Element created");
             } catch (e) {
@@ -24,7 +26,7 @@ const createTaskElement = (text) => {
             fail("Error creating element");
         }
     });
-}
+};
 
 const saveTask = (task) => {
     return new Promise((success, fail) => {
@@ -33,7 +35,7 @@ const saveTask = (task) => {
             try {
                 tasks.push(task);
                 window.localStorage.setItem('tasks', JSON.stringify(tasks));
-                success("Task saved");
+                success({text: task, id: tasks.length - 1});
             } catch (e) {
                 fail(e.message)
             }
@@ -42,7 +44,7 @@ const saveTask = (task) => {
             fail("Error saving task");
         }
     });
-}
+};
 
 const loadTasks = () => {
     return new Promise((success, fail) => {
@@ -53,7 +55,42 @@ const loadTasks = () => {
             fail(e.message)
         }
     });
-}
+};
+
+const removeTask = (index) => {
+    return new Promise((success, fail) => {
+
+        if (isNaN(index)) {
+            fail("index cannot be null");
+        }
+        else {
+
+            try {
+                let task = tasks[index];
+                tasks.splice(index, 1);
+                window.localStorage.setItem('tasks', JSON.stringify(tasks));
+                success('"' + task + '"' + ' removed')
+            } catch (e) {
+                fail(e.message);
+            }
+        }
+
+    });
+};
+
+const remove = (id) => {
+    removeTask(id)
+        .then((message) => {
+            console.log(message);
+            return initElementTasks(tasks);
+        })
+        .then((message) => {
+            console.log(message);
+        })
+        .catch((error) => {
+            console.log(error);
+        });
+};
 
 const initElementTasks = (tasks) => {
     return new Promise((success, fail) => {
@@ -61,11 +98,14 @@ const initElementTasks = (tasks) => {
 
             try {
 
+                container.innerHTML = "";
                 for (let i = 0; i < tasks.length; i++) {
                     let item = document.createElement('li');
-                    item.innerHTML = '<div class="alert alert-primary">' + tasks[i] + '</div>';
+                    item.innerHTML = '<div class="alert alert-primary">' + tasks[i] + '<button type="button" class="close" onclick="remove(' + i + ')" aria-label="Remove"><span aria-hidden="true"><i class="far fa-trash-alt"></i></span></button></div>';
                     container.appendChild(item);
                 }
+
+                success("items redraw");
 
             } catch (e) {
                 fail(e.message)
@@ -75,7 +115,7 @@ const initElementTasks = (tasks) => {
             fail("tasks are undefined");
         }
     });
-}
+};
 
 loadTasks().then((data) => {
     if (data) {
@@ -95,9 +135,8 @@ submitBtn.addEventListener('click', (event) => {
     if (task) {
 
         saveTask(task)
-            .then((message) => {                
-                console.log(message);
-                return createTaskElement(task);
+            .then((data) => {
+                return createTaskElement(data);
             }).then((message) => {                
                 console.log(message);
                 clearInput();

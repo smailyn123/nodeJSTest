@@ -1,3 +1,11 @@
 h1 {
     color: #0094ff;
 }
+
+ul#task-container {
+    padding: 0;
+}
+
+ul#task-container li {
+    display: block;
+}
